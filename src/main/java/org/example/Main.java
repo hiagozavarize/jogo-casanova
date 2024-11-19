@@ -18,6 +18,9 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
     private final Image[] explosionImages = new Image[4];
     private final Image[] backgroundImages = new Image[2];
 
+    //imagem do coração
+    private Image heartImage;
+
     // Variáveis para controle do fundo
     private int currentBackground = 0;
     private long lastBackgroundChangeTime = 0;
@@ -98,6 +101,8 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
         }
         backgroundImages[0] = new ImageIcon("C:/Users/noobs/IdeaProjects/aulaProgramacaoMovel/src/main/java/org/example/pista0.jpg").getImage();
         backgroundImages[1] = new ImageIcon("C:/Users/noobs/IdeaProjects/aulaProgramacaoMovel/src/main/java/org/example/pista1.jpg").getImage();
+
+        heartImage = new ImageIcon("C:/Users/noobs/IdeaProjects/aulaProgramacaoMovel/src/main/java/org/example/heart.png").getImage();
     }
 
 
@@ -151,10 +156,19 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
         for (Bomb bomb : bombs) {
             offscreenGraphics.drawImage(bomb.image, bomb.x, bomb.y, BOMB_SIZE, BOMB_SIZE + 20, this);
         }
+
+        // Desenha as vidas como corações
+        int heartX = 60; // Posição inicial do primeiro coração no eixo X
+        int heartY = 30; // Posição no eixo Y
+        int heartSpacing = 30; // Espaçamento entre os corações
+        for (int i = 0; i < lives; i++) {
+            offscreenGraphics.drawImage(heartImage, heartX + i * heartSpacing, heartY, 30, 30, this);
+        }
+
         offscreenGraphics.setColor(Color.BLACK);
         offscreenGraphics.setFont(new Font("Arial", Font.BOLD, 18));
-        offscreenGraphics.drawString("Life: " + lives, 20, 50);
-        offscreenGraphics.drawString("Time: " + (GAME_TIME - (System.currentTimeMillis() - startTime)) / 1000, 20, 70);
+        offscreenGraphics.drawString("Life: ", 20, 50);
+        offscreenGraphics.drawString("Time: " + (GAME_TIME - (System.currentTimeMillis() - startTime)) / 1000, 20, 75);
 
         if (exploding) handleExplosion();
     }
@@ -233,7 +247,7 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
 
     // Verifica se há colisão entre o jogador e uma bomba
     private boolean checkBombCollision(Bomb bomb) {
-        Rectangle playerRect = new Rectangle(playerX, playerY, PLAYER_SIZE - 20, PLAYER_SIZE + 20);
+        Rectangle playerRect = new Rectangle(playerX, playerY, PLAYER_SIZE - 20, PLAYER_SIZE - 10);
         Rectangle bombRect = new Rectangle(bomb.x + 10, bomb.y + 10, BOMB_SIZE - 20, BOMB_SIZE - 20);
         return playerRect.intersects(bombRect);
     }
