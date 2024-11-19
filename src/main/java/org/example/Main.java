@@ -13,7 +13,7 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
     // Thread do jogo
     private Thread gameThread;
     // Arrays para armazenar as imagens do jogador, bombas, explosões e fundos
-    private final Image[] playerImages = new Image[4];
+    private final Image[] playerImages = new Image[3];
     private final Image[] bombImages = new Image[3];
     private final Image[] explosionImages = new Image[4];
     private final Image[] backgroundImages = new Image[2];
@@ -21,7 +21,6 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
     // Variáveis para controle do fundo
     private int currentBackground = 0;
     private long lastBackgroundChangeTime = 0;
-    private final int BACKGROUND_CHANGE_INTERVAL = 100; // Intervalo para mudar a imagem de fundo em milissegundos
     private final Random random = new Random();
 
     // Variáveis de posição e velocidade do jogador
@@ -50,7 +49,6 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
     // Lista para armazenar as bombas e controlar o tempo de spawn
     private final ArrayList<Bomb> bombs = new ArrayList<>();
     private long lastSpawnTime = 0;
-    private final int SPAWN_INTERVAL = 300;
 
     // Constantes de tamanho do jogador e da bomba
     private final int PLAYER_SIZE = 70;
@@ -61,7 +59,7 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
     private Graphics offscreenGraphics;
 
     // Botão para jogar novamente
-    private JButton playAgainButton;
+    private final JButton playAgainButton;
 
     public Main() {
         loadImages();
@@ -89,7 +87,7 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
 
     // Carregamento das imagens
     private void loadImages() {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             playerImages[i] = new ImageIcon("C:/Users/noobs/IdeaProjects/aulaProgramacaoMovel/src/main/java/org/example/" + i + ".png").getImage();
         }
         for (int i = 0; i < 3; i++) {
@@ -102,8 +100,9 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
         backgroundImages[1] = new ImageIcon("C:/Users/noobs/IdeaProjects/aulaProgramacaoMovel/src/main/java/org/example/pista1.jpg").getImage();
     }
 
-    // Paint método para desenhar objetos e o estado do jogo na tela
+
     @Override
+    // Paint método para desenhar objetos e o estado do jogo na tela
     public void paint(Graphics g) {
         if (offscreenImage == null) {
             offscreenImage = createImage(getWidth(), getHeight());
@@ -128,6 +127,8 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
     // Atualiza a imagem de fundo
     private void updateBackground() {
         long now = System.currentTimeMillis();
+        // Intervalo para mudar a imagem de fundo em milissegundos
+        int BACKGROUND_CHANGE_INTERVAL = 100;
         if (now - lastBackgroundChangeTime >= BACKGROUND_CHANGE_INTERVAL) {
             currentBackground = (currentBackground + 1) % backgroundImages.length;
             lastBackgroundChangeTime = now;
@@ -176,7 +177,7 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
     public void run() {
         while (!gameOver && !isWin) {
             try {
-                Thread.sleep(50);
+                Thread.sleep(60);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 return;
@@ -193,13 +194,14 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
             if (playerY > getHeight() - PLAYER_SIZE) playerY = getHeight() - PLAYER_SIZE;
 
             // Controla o tempo de spawn das bombas
+            int SPAWN_INTERVAL = 300;
             if (System.currentTimeMillis() - lastSpawnTime >= SPAWN_INTERVAL) {
                 spawnBomb();
                 lastSpawnTime = System.currentTimeMillis();
             }
 
             // Atualiza bombas e checa colisões
-            bombs.removeIf(bomb -> updateBomb(bomb));
+            bombs.removeIf(this::updateBomb);
             currentFrame = (currentFrame + 1) % playerImages.length;
 
             // Checa se o tempo do jogo acabou
