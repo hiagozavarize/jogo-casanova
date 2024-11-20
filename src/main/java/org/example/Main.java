@@ -1,11 +1,14 @@
 package org.example;
 
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -20,6 +23,9 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
 
     //imagem do coração
     private Image heartImage;
+
+    //variavel de controle do som da explosão da bomba
+    private boolean isBombExploding = false;
 
     // Variáveis para controle do fundo
     private int currentBackground = 0;
@@ -64,8 +70,12 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
     // Botão para jogar novamente
     private final JButton playAgainButton;
 
+    private Clip backgroundClip;
+
     public Main() {
         loadImages();
+
+        backgroundClip = playSound("backgroundSong1", true);
 
         // Configuração da janela
         setSize(1920, 1080);
@@ -86,6 +96,23 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
         spawnBomb();
         lastSpawnTime = System.currentTimeMillis();
         gameThread.start();
+    }
+
+    private Clip playSound(String soundFile, boolean loop) {
+        try {
+            File file = new File("C:/Users/noobs/IdeaProjects/aulaProgramacaoMovel/src/main/java/org/example/songs/" + soundFile + ".wav");
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioStream);
+            if (loop) {
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+            }
+            clip.start();
+            return clip;
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     // Carregamento das imagens
@@ -146,6 +173,10 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
         offscreenGraphics.setColor(gameOver ? Color.RED : Color.GREEN);
         offscreenGraphics.drawString(gameOver ? "Game Over" : "You Win", getWidth() / 2 - 100, getHeight() / 2);
 
+        if (backgroundClip != null && backgroundClip.isRunning()) {
+            backgroundClip.stop();
+        }
+
         playAgainButton.setBounds(getWidth() / 2 - 75, getHeight() / 2 + 50, 150, 50);
         playAgainButton.setVisible(true);
     }
@@ -182,10 +213,15 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
             if (explosionFrame >= explosionImages.length) {
                 exploding = false;
                 explosionFrame = 0;
+                isBombExploding = false;
             }
         }
-    }
+        if (!isBombExploding) {
+            playSound("explosionSoundEffect", false);
+            isBombExploding = true; // Evita tocar novamente durante a mesma explosão
+        }
 
+    }
     // Método de execução da thread do jogo
     @Override
     public void run() {
@@ -196,7 +232,6 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
                 Thread.currentThread().interrupt();
                 return;
             }
-
             // Atualizar posição do jogador
             playerX += playerSpeedX;
             playerY += playerSpeedY;
@@ -277,6 +312,7 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
         spawnBomb();
         lastSpawnTime = System.currentTimeMillis();
         playAgainButton.setVisible(false);
+        backgroundClip = playSound("backgroundSong1", true);
         requestFocus();
     }
 
