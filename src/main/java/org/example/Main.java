@@ -43,7 +43,7 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
 
     // Tempo de início do jogo e duração do jogo
     private long startTime;
-    private final int GAME_TIME = 40000;
+    private final int GAME_TIME = 30000;
 
     // Controle de estado do jogo (game over, explosão, vitória)
     private boolean gameOver = false;
@@ -69,6 +69,8 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
 
     // Botão para jogar novamente
     private final JButton playAgainButton;
+    private final Color blueColor = new Color(0, 0, 255);
+    private final Color yellowColor = new Color(255, 255, 0);
 
     private Clip backgroundClip;
 
@@ -86,6 +88,11 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
         // Configuração do listener do teclado e botão "play again"
         addKeyListener(this);
         playAgainButton = new JButton("Play Again");
+        playAgainButton.setBackground(blueColor);
+        playAgainButton.setForeground(yellowColor);
+        playAgainButton.setFont(new Font("Arial", Font.BOLD, 16));
+        playAgainButton.setBorder(BorderFactory.createLineBorder(yellowColor, 2, true));
+        playAgainButton.setFocusPainted(false);
         playAgainButton.addActionListener(this);
         playAgainButton.setVisible(false);
         add(playAgainButton);
@@ -100,7 +107,7 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
 
     private Clip playSound(String soundFile, boolean loop) {
         try {
-            File file = new File("C:/Users/noobs/IdeaProjects/aulaProgramacaoMovel/src/main/java/org/example/songs/" + soundFile + ".wav");
+            File file = new File("C:/jogo-casanova/src/main/java/org/example/songs/" + soundFile + ".wav");
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
             Clip clip = AudioSystem.getClip();
             clip.open(audioStream);
@@ -118,18 +125,18 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
     // Carregamento das imagens
     private void loadImages() {
         for (int i = 0; i < 3; i++) {
-            playerImages[i] = new ImageIcon("C:/Users/noobs/IdeaProjects/aulaProgramacaoMovel/src/main/java/org/example/" + i + ".png").getImage();
+            playerImages[i] = new ImageIcon("C:/jogo-casanova/src/main/java/org/example/" + i + ".png").getImage();
         }
         for (int i = 0; i < 3; i++) {
-            bombImages[i] = new ImageIcon("C:/Users/noobs/IdeaProjects/aulaProgramacaoMovel/src/main/java/org/example/bomb" + i + ".jpg").getImage();
+            bombImages[i] = new ImageIcon("C:/jogo-casanova/src/main/java/org/example/bomb" + i + ".jpg").getImage();
         }
         for (int i = 0; i < 4; i++) {
-            explosionImages[i] = new ImageIcon("C:/Users/noobs/IdeaProjects/aulaProgramacaoMovel/src/main/java/org/example/explosion" + i + ".jpg").getImage();
+            explosionImages[i] = new ImageIcon("C:/jogo-casanova/src/main/java/org/example/explosion" + i + ".jpg").getImage();
         }
-        backgroundImages[0] = new ImageIcon("C:/Users/noobs/IdeaProjects/aulaProgramacaoMovel/src/main/java/org/example/pista0.jpg").getImage();
-        backgroundImages[1] = new ImageIcon("C:/Users/noobs/IdeaProjects/aulaProgramacaoMovel/src/main/java/org/example/pista1.jpg").getImage();
+        backgroundImages[0] = new ImageIcon("C:/jogo-casanova/src/main/java/org/example/pista0.jpg").getImage();
+        backgroundImages[1] = new ImageIcon("C:/jogo-casanova/src/main/java/org/example/pista1.jpg").getImage();
 
-        heartImage = new ImageIcon("C:/Users/noobs/IdeaProjects/aulaProgramacaoMovel/src/main/java/org/example/heart.png").getImage();
+        heartImage = new ImageIcon("C:/jogo-casanova/src/main/java/org/example/heart.png").getImage();
     }
 
 
@@ -171,13 +178,19 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
     private void showEndMessage() {
         offscreenGraphics.setFont(new Font("Arial", Font.BOLD, 32));
         offscreenGraphics.setColor(gameOver ? Color.RED : Color.GREEN);
-        offscreenGraphics.drawString(gameOver ? "Game Over" : "You Win", getWidth() / 2 - 100, getHeight() / 2);
+
+        // Cálculo das posições para centralizar a mensagem e o botão
+        int messageWidth = offscreenGraphics.getFontMetrics().stringWidth(gameOver ? "Game Over" : "You Win");
+        int messageX = (getWidth() - messageWidth) / 2;
+        int messageY = getHeight() / 2 - 50;
+
+        offscreenGraphics.drawString(gameOver ? "Game Over" : "You Win", messageX, messageY);
 
         if (backgroundClip != null && backgroundClip.isRunning()) {
             backgroundClip.stop();
         }
 
-        playAgainButton.setBounds(getWidth() / 2 - 75, getHeight() / 2 + 50, 150, 50);
+        playAgainButton.setBounds(getWidth() / 2 - 75, getHeight() / 2, 150, 50);
         playAgainButton.setVisible(true);
     }
 
