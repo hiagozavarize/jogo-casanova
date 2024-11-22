@@ -107,7 +107,7 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
 
     private Clip playSound(String soundFile, boolean loop) {
         try {
-            File file = new File("C:/jogo-casanova/src/main/java/org/example/songs/" + soundFile + ".wav");
+            File file = new File("src/main/java/org/example/songs/" + soundFile + ".wav");
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
             Clip clip = AudioSystem.getClip();
             clip.open(audioStream);
@@ -125,18 +125,18 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
     // Carregamento das imagens
     private void loadImages() {
         for (int i = 0; i < 3; i++) {
-            playerImages[i] = new ImageIcon("C:/jogo-casanova/src/main/java/org/example/" + i + ".png").getImage();
+            playerImages[i] = new ImageIcon("src/main/java/org/example/" + i + ".png").getImage();
         }
         for (int i = 0; i < 3; i++) {
-            bombImages[i] = new ImageIcon("C:/jogo-casanova/src/main/java/org/example/bomb" + i + ".jpg").getImage();
+            bombImages[i] = new ImageIcon("src/main/java/org/example/bomb" + i + ".jpg").getImage();
         }
         for (int i = 0; i < 4; i++) {
-            explosionImages[i] = new ImageIcon("C:/jogo-casanova/src/main/java/org/example/explosion" + i + ".jpg").getImage();
+            explosionImages[i] = new ImageIcon("src/main/java/org/example/explosion" + i + ".jpg").getImage();
         }
-        backgroundImages[0] = new ImageIcon("C:/jogo-casanova/src/main/java/org/example/pista0.jpg").getImage();
-        backgroundImages[1] = new ImageIcon("C:/jogo-casanova/src/main/java/org/example/pista1.jpg").getImage();
+        backgroundImages[0] = new ImageIcon("src/main/java/org/example/pista0.jpg").getImage();
+        backgroundImages[1] = new ImageIcon("src/main/java/org/example/pista1.jpg").getImage();
 
-        heartImage = new ImageIcon("C:/jogo-casanova/src/main/java/org/example/heart.png").getImage();
+        heartImage = new ImageIcon("src/main/java/org/example/heart.png").getImage();
     }
 
 
@@ -209,6 +209,7 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
             offscreenGraphics.drawImage(heartImage, heartX + i * heartSpacing, heartY, 30, 30, this);
         }
 
+        //estilização dos textos life e time
         offscreenGraphics.setColor(Color.BLACK);
         offscreenGraphics.setFont(new Font("Arial", Font.BOLD, 18));
         offscreenGraphics.drawString("Life: ", 20, 50);
