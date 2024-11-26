@@ -50,7 +50,7 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
     private boolean exploding = false;
     private boolean isWin = false;
 
-    // Variáveis para controle da explosão
+    // Variáveis para controle da explosão,
     private int explosionFrame = 0;
     private long explosionStartTime;
     private int explosionX, explosionY;
@@ -133,9 +133,9 @@ public class Main extends JFrame implements Runnable, KeyListener, ActionListene
         for (int i = 0; i < 4; i++) {
             explosionImages[i] = new ImageIcon("src/main/java/org/example/explosion" + i + ".jpg").getImage();
         }
-        backgroundImages[0] = new ImageIcon("src/main/java/org/example/pista0.jpg").getImage();
-        backgroundImages[1] = new ImageIcon("src/main/java/org/example/pista1.jpg").getImage();
-
+        for(int i = 0; i < 2; i++) {
+            backgroundImages[i] = new ImageIcon("src/main/java/org/example/pista"+i+".jpg").getImage();
+        }
         heartImage = new ImageIcon("src/main/java/org/example/heart.png").getImage();
     }
 
